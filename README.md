@@ -1,8 +1,3 @@
-
-Here's a detailed README.md on how to set up your project with MySQL database and Sequelize models:
-
-markdown
-Copy code
 # Task Management API
 
 This project is a Task Management System API built using **Node.js**, **Express**, and **MySQL** with **Sequelize ORM**. It provides user authentication, role-based task management, and task prioritization features.
