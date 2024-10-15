@@ -7,6 +7,8 @@ const isAuthenticated = require("../middlewares/IsAuthenticated");
 
 router.post("/auth/register", validateUserRegistration, UserController.signup);
 router.post("/auth/login", validateUserRegistration, UserController.signin);
+router.post("/auth/refresh-token", UserController.refreshAccessToken);
+
 router.post("/tasks", isAuthenticated, TaskController.createtask);
 router.get("/tasks", isAuthenticated, TaskController.getALLTask);
 router.get("/tasks/:id", isAuthenticated, TaskController.getTask);

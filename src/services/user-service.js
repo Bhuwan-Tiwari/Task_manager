@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-const { JWT_KEY } = require('../config/serverconfig')
-
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const {ACCESS_TOKEN_SECRET,REFRESH_TOKEN_SECRET} = require("../config/serverconfig");
 
 const UserRepository = require("../repository/user-repository");
 
@@ -29,9 +28,9 @@ class UserService {
         console.log("password doesnot match");
         throw { error: "Incorrect password" };
       }
-
-      const newJWT = this.createToken({ email: user.email, id: user.id });
-      return newJWT;
+      const accessToken =  this.generateAccessToken({ id: user.id });
+      const refreshToken = this.generateRefreshToken({ id: user.id });
+      return { user, accessToken, refreshToken };
     } catch (error) {
       console.log("something went wrong in service layer");
       throw error;
@@ -47,13 +46,26 @@ class UserService {
     }
   }
 
-  createToken(user) {
+  generateAccessToken(user) {
+    return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+  }
+
+  generateRefreshToken(user) {
+    return jwt.sign(user, REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
+  }
+
+  async refreshAccessToken(refreshToken) {
+    if (!refreshToken) {
+      throw new Error("No refresh token provided");
+    }
+
     try {
-      const result = jwt.sign(user, JWT_KEY, { expiresIn: "1h" });
-      return result;
+      const user = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
+      const accessToken = this.generateAccessToken({ id: user.id });
+      return accessToken;
     } catch (error) {
-      console.log("Something went wrong in token creation");
-      throw error;
+      console.log("Invalid refresh token");
+      throw new Error("Invalid refresh token");
     }
   }
 }

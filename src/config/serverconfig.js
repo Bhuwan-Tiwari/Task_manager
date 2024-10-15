@@ -1,8 +1,8 @@
-const dotenv = require('dotenv')
-const bcrypt = require('bcrypt')
+const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 dotenv.config();
-module.exports  =
-{
-    SALT :bcrypt.genSaltSync(10),
-    JWT_KEY:process.env.JWT_KEY
-}
+module.exports = {
+  SALT: bcrypt.genSaltSync(10),
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
+};
