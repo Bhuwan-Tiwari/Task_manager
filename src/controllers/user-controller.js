@@ -1,19 +1,6 @@
-const jwt = require("jsonwebtoken");
 const UserService = require("../services/user-service");
-const {
-  ACCESS_TOKEN_SECRET,
-  REFRESH_TOKEN_SECRET,
-} = require("../config/serverconfig");
-
 const userService = new UserService();
-
-const generateAccessToken = (user) => {
-  return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
-};
-
-const generateRefreshToken = (user) => {
-  return jwt.sign(user, REFRESH_TOKEN_SECRET, { expiresIn: "1d" });
-};
+const {StatusCodes} = require('http-status-codes')
 
 const signup = async (req, res) => {
   try {
@@ -23,13 +10,13 @@ const signup = async (req, res) => {
       password: req.body.password,
     });
 
-    return res.status(201).json({
+    return res.status(StatusCodes.CREATED).json({
       success: true,
       message: "Successfully created a new user",
       data: response,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: error.message,
       data: {},
       success: false,
@@ -45,14 +32,14 @@ const signin = async (req, res) => {
       req.body.password
     );
 
-    return res.status(201).json({
+    return res.status(StatusCodes.CREATED).json({
       success: true,
       message: "Successfully signed in",
       accessToken,
       refreshToken,
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "something went wrong",
       success: false,
       err: error,
@@ -67,7 +54,7 @@ const refreshAccessToken = async (req, res) => {
     const accessToken = await userService.refreshAccessToken(refreshToken);
     res.json({ accessToken });
   } catch (error) {
-    res.status(403).json({ error: error.message });
+    res.status(StatusCodes.FORBIDDEN).json({ error: error.message });
   }
 };
 
